@@ -38,6 +38,7 @@ const operate = function() {
 };
 
 const updateDisplay = function() {
+    roundDisplay();
     const display = document.querySelector(".display");
     display.textContent = displayValue;
 };
@@ -53,6 +54,9 @@ const updateNumber = function(e) {
         } else {
             secondNumber = "";
         }
+    }
+    if (secondNumber.length >= 13) {
+        return;
     }
     if (e.target.textContent === "." && (secondNumber.indexOf(".") != -1)) {
         return;
@@ -101,6 +105,10 @@ const equals = function() {
     console.log(secondNumber);
     pressedEquals = true;
 };
+
+const roundDisplay = function() {
+    displayValue = Math.round(parseFloat(displayValue) * 100) / 100;
+}
 
 const btns = document.querySelectorAll("button");
 btns.forEach((button) => {
