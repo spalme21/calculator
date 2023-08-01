@@ -1,7 +1,8 @@
-let firstNumber = "0";
+let firstNumber = "";
 let operator = "";
 let secondNumber = "0";
 let displayValue = "0";
+let pressedEquals = false;
 
 const add = function (a, b) {
     return a + b;
@@ -19,20 +20,22 @@ const divide = function (a, b) {
     return a / b;
 }
 
-const operate = function(firstNumber, operator, secondNumber) {
+const operate = function() {
+    let a = parseFloat(firstNumber);
+    let b = parseFloat(secondNumber);
     switch (operator) {
         case "+":
-            return add(firstNumber, secondNumber);
+            return add(a, b);
         case "-":
-            return subtract(firstNumber, secondNumber);
+            return subtract(a, b);
         case "X":
-            return multiply(firstNumber, secondNumber);
+            return multiply(a, b);
         case "/":
-            return divide(firstNumber, secondNumber);
+            return divide(a, b);
         default:
             break;
-    }
-}
+    };
+};
 
 const updateDisplay = function() {
     const display = document.querySelector(".display");
@@ -40,6 +43,10 @@ const updateDisplay = function() {
 };
 
 const updateNumber = function(e) {
+    if (pressedEquals) {
+        clear();
+        pressedEquals = false;
+    }
     if (secondNumber === "0") {
         if (e.target.textContent === ".") {
             secondNumber = "0";
@@ -55,11 +62,56 @@ const updateNumber = function(e) {
     updateDisplay();
 };
 
+const setOperator = function(e) {
+    if (!firstNumber) {
+        firstNumber = secondNumber;
+        operator = e.target.textContent;
+        secondNumber = "0";
+        updateDisplay();
+    } else if (pressedEquals) {
+        operator = e.target.textContent;
+        secondNumber = "0";
+        updateDisplay();
+        pressedEquals = false;
+    } else {
+        let answer = operate();
+        displayValue = answer;
+        updateDisplay();
+        firstNumber = answer;
+        operator = e.target.textContent;
+        secondNumber = "0";
+    }
+};
+
+const clear = function() {
+    firstNumber = "";
+    operator = "";
+    secondNumber = "0";
+    displayValue = "0";
+    updateDisplay();
+};
+
+const equals = function() {
+    let answer = operate();
+    displayValue = answer;
+    updateDisplay();
+    firstNumber = answer;
+    console.log(firstNumber);
+    console.log(operator);
+    console.log(secondNumber);
+    pressedEquals = true;
+};
+
 const btns = document.querySelectorAll("button");
 btns.forEach((button) => {
     if (button.className === "number") {
-        console.log(button.textContent);
         button.addEventListener('click', updateNumber);
+    } else if (button.className === "operator") {
+        button.addEventListener('click', setOperator);
+    } else if (button.id === "clear") {
+        button.addEventListener('click', clear);
+    } else if (button.id === "=") {
+        button.addEventListener('click', equals);
     };
 });
 
